@@ -1,28 +1,32 @@
 import { Routes, Route } from 'react-router-dom'
-import NavBar from './components/NavBar'
-import HomePage from "./components/HomePage"
-import Products from './components/Products'
-import Cart from './components/Cart'
-import CheckoutConf from './components/CheckoutConf'
-import './App.css'
-import SingleProduct from './components/SingleProduct'
-import { useState } from 'react'
+import NavBar from './components/NavBar.jsx'
+import HomePage from './pages/HomePage.jsx'
+import Products from './pages/Products'
+import './style/styles.css'
+import ProductDetails from './pages/ProductDetails'
+import Register from './pages/Register'
+import Login from './pages/Login.jsx'
+import Cart from './pages/Cart.jsx'
+import Footer from './components/Footer.jsx'
 
 
 function App() {
-  const [cart, setCart] = useState([])
 
   return (
-    <div>
+    <>
       <NavBar />
+      <div style={{ minHeight: 'calc(100vh - 60px)' }}>
       <Routes> 
         <Route path="/" element={<HomePage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/products" element={<Products />} />
-        <Route path="/single-product/:productId" element={<SingleProduct />} />
-        <Route path="/cart" element={<Cart cartItems={cart} />} />
-        <Route path="/checkout" element={<CheckoutConf />} />
-      </Routes> 
-    </div>
+        <Route path="/product/:productId" element={<ProductDetails />} />
+        <Route path="/cart" element={<Cart />} />
+      </Routes>
+      </div> 
+      <Footer />
+    </>
   )
 }
 

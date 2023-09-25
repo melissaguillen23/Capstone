@@ -1,25 +1,37 @@
-import React from "react"
-import { Link } from 'react-router-dom'
-import "../main.css"
+import React, { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import "../style/styles.css"
 
 export default function NavBar() {
-    return (
-      <div>
-        <nav>
-          <h1>Capstone Store</h1>
-          <ul>
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  return (
+    <nav>
+        <Link to="/" className="title">
+            mg | capstone
+        </Link>
+        <div className="menu" onClick={() => setMenuOpen(!menuOpen)}>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul className={menuOpen ? "open" : ""}>      
             <li>
-              <Link to="/">Home</Link>
+                <NavLink to="/">Home</NavLink>
             </li>
             <li>
-              <Link to="/products">Products</Link>
+                <NavLink to="/products">Products</NavLink>
             </li>
             <li>
-              <Link to="/cart">Cart</Link>
+                <NavLink to="/login">Login</NavLink>
             </li>
-            <button>Logout</button>
-          </ul>
-        </nav>
-      </div>
-    )
-  }
+            <li>
+                <NavLink to="/register">Sign Up</NavLink>
+            </li>
+            <li>
+                <NavLink to="/cart">Cart</NavLink>
+            </li>
+        </ul>
+    </nav>
+  )
+}
