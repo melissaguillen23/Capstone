@@ -7,13 +7,19 @@ export default function SearchBar({ onSearch }) {
         setSearchText(e.target.value);
     };
 
-    const handleSearch = () => {
+    const handleSearchClick = () => {
         onSearch(searchText);
     };
 
 return (
-    <div>
-      <h1>Search Bar</h1>
+    <div className="search-bar">
+      <input 
+      type="text"
+      placeholder="Search products..."
+      value={searchText}
+      onChange={handleInputChange} 
+      />
+      <button onClick={handleSearchClick}>Search</button>
     </div>
     );
 } 
