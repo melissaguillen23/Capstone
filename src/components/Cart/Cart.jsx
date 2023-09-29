@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { useCart } from "../../Context/CartContext";
 
 export default function Cart() {
-  const { cart, removeFromCart, updateQuantity } = useCart();
+  const { cart, removeFromCart, updateQuantity, calculateTotalPrice } = useCart();
   console.log("Cart from context:", cart);
   const [detailedCart, setDetailedCart] = useState([])
   
@@ -38,6 +38,10 @@ export default function Cart() {
     updateQuantity(productId, newQuantity)
   }
 
+  const handleCheckout = () => {
+    alert("Checkout Confirmation: Purchase complete! Thank you for your order!")
+  }
+
     return (
       <div className="cart">
         <h1>Shopping Cart</h1>
@@ -64,6 +68,10 @@ export default function Cart() {
           ))
         )}
         )
+        <div>
+          <p><strong>Total Price: ${calculateTotalPrice().toFixed(2)}</strong></p>
+          <button onClick={handleCheckout}>Checkout</button>
+        </div>
       </div>
     );
   }
