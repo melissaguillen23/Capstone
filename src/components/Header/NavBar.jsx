@@ -7,9 +7,8 @@ import "../../style/styles.css"
 
 export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false)
-
+  const { cart } = useCart()
   const { isLoggedIn, logout } = useAuth();
-  const { cartCount } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -47,7 +46,7 @@ export default function NavBar() {
             )}
             <li>
                 <div className="cart-icon" >
-                    <span className="cart-count">{cartCount}</span>
+                    <span className="cart-count">{cart.length}</span>
                     <NavLink to="/cart">
                         <ShoppingCart size={32}/>
                     </NavLink>

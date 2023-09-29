@@ -1,52 +1,69 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { useCart } from "../../Context/CartContext";
-import { useNavigate } from "react-router-dom";
 
 export default function Cart() {
-  const { cart, removeFromCart, isModalOpen, handleCloseModal } = useCart();
-  const navigate = useNavigate();
+  const { cart, removeFromCart, updateQuantity } = useCart();
+  console.log("Cart from context:", cart);
+  const [detailedCart, setDetailedCart] = useState([])
+  
+
+  useEffect(() => {
+    async function fetchCartDetails() {
+      const cartDetails = await api.getCart(cart.id)
+      console.log("Cart details from API:", cartDetails);
+
+      const productDetailsPromises = cartDetails.products.map(async (item) => {
+        const product = await api.singleProduct(item.productId)
+        return {
+          ...product,
+          quantity: item.quantity,
+        }
+      })
+      const detailedProducts = await Promise.all(productDetailsPromises)
+      console.log("Detailed products:", detailedProducts); 
+      setDetailedCart(detailedProducts)
+    }
+
+    if (cart && cart.id) {
+      fetchCartDetails()
+    }
+  }, [cart])
 
   const handleRemove = (productId) => {    
       removeFromCart(productId);    
   };
 
+  const handleQuantityChange = (productId, event) => {
+    const newQuantity = parseInt(event.target.value)
+    updateQuantity(productId, newQuantity)
+  }
+
     return (
       <div className="cart">
         <h1>Shopping Cart</h1>
-        {!cart || cart.products.length === 0 ? (
+        {cart.length === 0 ? (
           <p>Your cart is empty.</p>
         ) : (
-          cart.products.map(item => (
-            <div key={item.productId}>
+          cart.map(item => (
+            <div key={item.id}>
               <h3>{item.title}</h3>
               <p>Price: ${item.price}</p>
-              <p>
-                Quantity:
+              <p>Quantity:
                 <input 
                 type="number"
                 value={item.quantity}
-                readOnly
+                onChange={(e) => {
+                  const newQuantity = parseInt(e.target.value)
+                  updateQuantity(item.id, newQuantity) 
+                }}
+                min="1"
               />
             </p>
-            <button onClick={() => handleRemove(item.productId)}>Remove</button>
+            <button onClick={() => handleRemove(item.id)}>Remove</button>
             </div>
           ))
         )}
-        {isModalOpen && (
-          <>
-            <div className="Cart-Modal-Overlay" onClick={handleCloseModal}></div>
-            <div className="Cart-Modal" >
-              <button onClick={handleCloseModal}>Close</button>
-              <button onClick={() => {
-                navigate('/cart');
-                handleCloseModal();
-            }}>
-                  Proceed to Checkout
-                </button>
-            </div>
-          </>
-          
-        )}
+        )
       </div>
     );
   }

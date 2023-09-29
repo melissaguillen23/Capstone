@@ -6,30 +6,31 @@ import SearchBar from "../../components/Product/SearchBar"
 
 export default function ProductPage() {
     const [filteredProducts, setFilteredProducts] = useState([]);
-    const [selectedProduct, setSelectedProduct] = useState(null);
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [sort, setSort] = useState('name');
     const [filter, setFilter] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        api.allProducts()
-            .then(data => {
-                setProducts(data);
-                setFilteredProducts(data);
+      useEffect(() => { 
+        setIsLoading(true);
+    
+        Promise.all([
+            api.allProducts(),
+            api.getAllCategories()
+        ])
+        .then(([productsData, categoriesData]) => {
+            setProducts(productsData);
+            setFilteredProducts(productsData);
+            setCategories(categoriesData);
         })
         .catch((error) => {
-            console.error('Error fetching products:', error);
-        });
-        api.getAllCategories()
-            .then(data => {
-                setCategories(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching categories:', error)
-            });
+            console.error('Error fetching data:', error);
+        })
+        .finally(() => setIsLoading(false));
+    
     }, []);
-
+    
     const handleSearch = (searchText) => {
         const filtered = products.filter((product) =>
         product.title.toLowerCase().includes(searchText.toLowerCase()));
@@ -58,17 +59,27 @@ export default function ProductPage() {
             <div className="store-header" >
             <h1>Discover our products</h1>
             </div>
-            <SearchBar onSearch={handleSearch} />
-            <ProductFilters
-                sort={sort} 
-                setSort={setSort} 
-                filter={filter} 
-                setFilter={setFilter} 
-                categories={categories} 
-            />
-            <div className="products" >
-            <ProductList products={filteredProducts} />
-            </div>
+            {isLoading ? (
+                <p>Loading...</p>
+            ) : (
+                <>
+                    <SearchBar onSearch={handleSearch} />
+                    <ProductFilters
+                        sort={sort} 
+                        setSort={setSort} 
+                        filter={filter} 
+                        setFilter={setFilter} 
+                        categories={categories}
+                    />
+                    <div className="products" >
+                        {filteredProducts.length === 0 ? (
+                            <p>No products found</p> 
+                        ) : (
+                            <ProductList products={filteredProducts} />
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     );
 }
